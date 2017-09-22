@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+#yowza!
+
 bl_info = {
     "name": "Cell Fracture",
     "author": "ideasman42, phymec, Sergey Sharybin",
