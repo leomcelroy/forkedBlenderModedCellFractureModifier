@@ -31,7 +31,6 @@ def points_as_bmesh_cells(verts,
     from mathutils import Vector
 
     cells = []
-
     points_sorted_current = [p for p in points]
     plane_indices = []
     vertices = []

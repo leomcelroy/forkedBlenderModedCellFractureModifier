@@ -38,8 +38,8 @@ def _points_from_object(obj, source):
         'VERT_OWN', 'VERT_CHILD',
         }
 
-    print(source - _source_all)
-    print(source)
+    #print(source - _source_all)
+    #print(source)
     assert(len(source | _source_all) == len(_source_all))
     assert(len(source))
 
@@ -116,7 +116,7 @@ def _points_from_object(obj, source):
             points.extend([p for spline in get_splines(gp)
                              for p in spline])
 
-    print("Found %d points" % len(points))
+    #print("Found %d points" % len(points))
 
     return points
 
@@ -136,6 +136,7 @@ def cell_fracture_objects(scene, obj,
                           cell_scale=(1.0, 1.0, 1.0),
                           ):
 
+
     from . import fracture_cell_calc
 
     # -------------------------------------------------------------------------
@@ -148,7 +149,7 @@ def cell_fracture_objects(scene, obj,
         points = _points_from_object(obj, {'VERT_OWN'})
 
     if not points:
-        print("no points found")
+        #print("no points found")
         return []
 
     # apply optional clamp
