@@ -241,19 +241,18 @@ def main(context, **kw):
     else:
         assert(0)
 ################################################################################
+
     #MODED move original object to appropriate layer
     #operations vs data
     newLayer = (obj.layers[:].index(True) + 1) % 20
 
     #-----original-----
-    #hide object
-    #obj.hide = True
-    bpy.context.scene.objects.active = obj
+
     cf = context.scene.frame_current
-    bpy.context.active_object.hide = True
-    bpy.context.active_object.keyframe_insert(data_path="hide", frame=cf) #index arguement?
-    bpy.context.active_object.hide = False
-    bpy.context.active_object.keyframe_insert(data_path="hide",frame=cf-1)
+
+    # bpy.ops.object.select_all(action='DESELECT')
+    # bpy.context.scene.objects.active = None
+
 
     # obj.layers[newLayer] = True
     # for i in range(20):
@@ -261,32 +260,98 @@ def main(context, **kw):
 
     #-----shards-----
 
-    bpy.context.scene.objects.active = objects[0]
+    #rigidbody
+    bpy.ops.object.select_all(action='DESELECT')
     for obj_cell in objects:
-        # bpy.context.space_data.context = 'MODIFIER'
-        # bpy.context.space_data.context = 'CONSTRAINT'
+        obj_cell.select = True
+        bpy.context.scene.objects.active = obj_cell
+        bpy.ops.rigidbody.objects_add()
+        obj_cell.rigid_body.kinematic = True
+        obj_cell.keyframe_insert(data_path="rigid_body.kinematic", frame=cf-1)
+        obj_cell.rigid_body.kinematic = False
+        obj_cell.keyframe_insert(data_path="rigid_body.kinematic", frame=cf)
 
-        obj_cell.constraint_add(type='CHILD_OF')
-        bpy.context.object.constraints["Child Of"].target = obj
-        bpy.ops.constraint.childof_set_inverse(constraint="Child Of", owner='OBJECT')
+    #parent
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select = True
+    for obj_cell in objects:
+        obj_cell.select = True
 
-        obj_cell.location.x += 5
-        obj_cell.select = True #makes all active for some reason?
+    bpy.context.scene.objects.active = obj
 
-    bpy.ops.rigidbody.objects_add()
+    bpy.ops.object.parent_set()
 
+    #set frame
+    bpy.context.scene.frame_set(cf)
+
+    #remove parent
+    bpy.ops.object.select_all(action='DESELECT')
+    for obj_cell in objects:
+        obj_cell.select = True
+        bpy.context.scene.objects.active = obj_cell
+        bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
+
+    #set keyframes to retain motion part 1
+    keyInterp = bpy.context.user_preferences.edit.keyframe_new_interpolation_type
+    context.user_preferences.edit.keyframe_new_interpolation_type ='LINEAR'
+
+    #set keyframe
+    for obj_cell in objects:
+        obj_cell.keyframe_insert(data_path='location')
+        obj_cell.keyframe_insert(data_path='rotation_euler')
+        obj_cell.keyframe_insert(data_path='scale')
+
+    #set parent
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select = True
+    for obj_cell in objects:
+        obj_cell.select = True
+
+    bpy.context.scene.objects.active = obj
+
+    bpy.ops.object.parent_set()
+
+    #set frame
+    bpy.context.scene.frame_set(cf-10)
+
+    #remove parent
+    bpy.ops.object.select_all(action='DESELECT')
+    for obj_cell in objects:
+        obj_cell.select = True
+        bpy.context.scene.objects.active = obj_cell
+        bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
+
+    #set keyframe
+    for obj_cell in objects:
+        obj_cell.keyframe_insert(data_path='location')
+        obj_cell.keyframe_insert(data_path='rotation_euler')
+        obj_cell.keyframe_insert(data_path='scale')
+
+    #set keyframes to retain motion part 2
+    context.user_preferences.edit.keyframe_new_interpolation_type = keyInterp
+
+    #set extrapolation
+    for obj_cell in objects:
+        for fc in obj_cell.animation_data.action.fcurves:
+            fc.extrapolation = "LINEAR"
+
+    #hiding keyframes
+    bpy.context.scene.objects.active = obj #having some issue with which object is active
+    obj.hide = True
+    obj.keyframe_insert(data_path="hide", frame=cf) #index arguement?
+    obj.hide = False
+    obj.keyframe_insert(data_path="hide",frame=cf-1)
+
+    for obj_cell in objects:
+        bpy.context.scene.objects.active = obj_cell
+        bpy.context.active_object.hide = False
+        bpy.context.active_object.keyframe_insert(data_path="hide", frame=cf)
+        bpy.context.active_object.hide = True
+        bpy.context.active_object.keyframe_insert(data_path="hide",frame=cf-1)
 
 
     #-----tests-----
-    # The object exists so lets add keyframes.
-    cf = context.scene.frame_current
-    #keyInterp = context.user_preferences.edit.keyframe_new_interpolation_type
-    #context.user_preferences.edit.keyframe_new_interpolation_type ='LINEAR'
-
-    #obj.keyframe_insert(data_path='BUILTIN_KSI_VisualLocRotScale', frame=(cf))
-
-    #context.user_preferences.edit.keyframe_new_interpolation_type = keyInterp
-
+    #obj.hide = True
 
 ################################################################################
 
