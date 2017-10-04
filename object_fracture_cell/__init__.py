@@ -248,12 +248,29 @@ def main(context, **kw):
     #-----original-----
     #hide object
     #obj.hide = True
+
+    print(yello_world)
+
+    f1 = 20
+    f2 = f1+1
+
+    #obj is OG object, objects is array of new ones
     bpy.context.scene.objects.active = obj
-    cf = context.scene.frame_current
-    bpy.context.active_object.hide = True
-    bpy.context.active_object.keyframe_insert(data_path="hide", frame=cf) #index arguement?
-    bpy.context.active_object.hide = False
-    bpy.context.active_object.keyframe_insert(data_path="hide",frame=cf-1)
+
+    cube = bpy.context.active_object
+    cube.hide = True
+    cube.keyframe_insert(data_path="hide", index=-1, frame=5)
+    cube.hide = False
+    cube.keyframe_insert(data_path="hide", index=-1, frame=6)
+
+
+
+    #bpy.context.scene.objects.active = obj
+    #cf = context.scene.frame_current
+    #bpy.context.active_object.hide = True
+    #bpy.context.active_object.keyframe_insert(data_path="hide", frame=f1) #index arguement?
+    #bpy.context.active_object.hide = False
+    #bpy.context.active_object.keyframe_insert(data_path="hide",frame=f2)
 
     # obj.layers[newLayer] = True
     # for i in range(20):
@@ -261,25 +278,25 @@ def main(context, **kw):
 
     #-----shards-----
 
-    bpy.context.scene.objects.active = objects[0]
-    for obj_cell in objects:
+    #bpy.context.scene.objects.active = objects[0]
+    #for obj_cell in objects:
         # bpy.context.space_data.context = 'MODIFIER'
         # bpy.context.space_data.context = 'CONSTRAINT'
 
-        obj_cell.constraint_add(type='CHILD_OF')
-        bpy.context.object.constraints["Child Of"].target = obj
-        bpy.ops.constraint.childof_set_inverse(constraint="Child Of", owner='OBJECT')
+        #obj_cell.constraint_add(type='CHILD_OF')
+        #bpy.context.object.constraints["Child Of"].target = obj
+        #bpy.ops.constraint.childof_set_inverse(constraint="Child Of", owner='OBJECT')
 
-        obj_cell.location.x += 5
-        obj_cell.select = True #makes all active for some reason?
+        #obj_cell.location.x += 5
+        #obj_cell.select = True #makes all active for some reason?
 
-    bpy.ops.rigidbody.objects_add()
+    #bpy.ops.rigidbody.objects_add()
 
 
 
     #-----tests-----
     # The object exists so lets add keyframes.
-    cf = context.scene.frame_current
+    #cf = context.scene.frame_current
     #keyInterp = context.user_preferences.edit.keyframe_new_interpolation_type
     #context.user_preferences.edit.keyframe_new_interpolation_type ='LINEAR'
 
